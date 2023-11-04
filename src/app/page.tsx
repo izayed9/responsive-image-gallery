@@ -1,95 +1,141 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { FC, useState } from "react";
 
-export default function Home() {
+interface Image {
+  id: number;
+  src: string;
+  isFeatured: boolean;
+}
+import Image from "next/image";
+import ReesponsiveDoc from "@/components/ReesponsiveDoc";
+
+function useDragAndDrop() {
+  const initialImages: Image[] = [
+    { id: 1, src: "/images/image-1.png", isFeatured: false },
+    { id: 2, src: "/images/image-2.png", isFeatured: false },
+    { id: 3, src: "/images/image-11.jpeg", isFeatured: true },
+    { id: 4, src: "/images/image-3.png", isFeatured: false },
+    { id: 5, src: "/images/image-4.png", isFeatured: false },
+    { id: 6, src: "/images/image-5.png", isFeatured: false },
+    { id: 7, src: "/images/image-6.png", isFeatured: false },
+    { id: 8, src: "/images/image-7.webp", isFeatured: false },
+    { id: 9, src: "/images/image-8.webp", isFeatured: false },
+    { id: 10, src: "/images/image-9.webp", isFeatured: false },
+    { id: 11, src: "/images/image-10.jpeg", isFeatured: false },
+    { id: 12, src: "/images/image.jpeg", isFeatured: false },
+  ];
+
+  const [draggedItem, setDraggedItem] = useState<number | null>(null);
+  const [items, setItems] = useState(initialImages);
+  const [selectedImages, setSelectedImages] = useState<number[]>([]);
+
+  const handleDragStart = (imageId: number) => {
+    setDraggedItem(imageId);
+  };
+
+  // A function that handles the drag enter event
+
+  const handleDragEnter = (e: any, imageId: number) => {
+    if (draggedItem) {
+      const newList = [...items];
+      const item = newList[draggedItem];
+      newList.splice(draggedItem, 1);
+      newList.splice(imageId, 0, item);
+      setDraggedItem(imageId);
+      setItems(newList);
+    }
+    return;
+  };
+
+
+  const handleCheckboxChange = (itemId: number) => {
+    if (selectedImages.includes(itemId)) {
+      setSelectedImages(selectedImages.filter((id) => id !== itemId));
+    } else {
+      setSelectedImages([...selectedImages, itemId]);
+    }
+  };
+
+  const handleDeleteSelectedItems = (): void => {
+    // Handle the deletion of selected items here, e.g., call an API or update your data.
+    // For this example, we'll just clear the selection who are inludeed selected Item
+    const seletedItems = [...items];
+   
+    const n = seletedItems.filter(
+      (img) => !selectedImages.includes(img.id)
+    );
+    setSelectedImages([]);
+    setItems(n);
+  };
+  return {
+    draggedItem,
+    items,
+    handleDragStart,
+    handleDragEnter,
+    selectedImages,
+    handleCheckboxChange,
+    handleDeleteSelectedItems,
+  };
+}
+
+const Gallery: FC = ({}) => {
+  const {
+    draggedItem,
+    items,
+    handleDragStart,
+    handleDragEnter,
+    
+    selectedImages,
+    handleCheckboxChange,
+    handleDeleteSelectedItems,
+  } = useDragAndDrop();
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
+    <div className="container">
+      <ReesponsiveDoc />
+      <div className="recorde">
+        <p>Selected Items: {selectedImages.length}</p>
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+          {selectedImages.length > 0 && (
+            <button
+              className="custom-button"
+              onClick={handleDeleteSelectedItems}
+            >
+              Delete files
+            </button>
+          )}
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="image-gallery">
+        {items &&
+          items.map((image, index) => (
+            <div
+              className={`image-item v${index}`}
+              key={image.id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={(e) => handleDragEnter(e, index)}
+              // onDragLeave={(e) => handleDragLeave(e)}
+              // onDrop={(e) => handleDrop(e)}
+              onDragOver={(e) => e.preventDefault()}
+            >
+              <label className="image-checkbox">
+                <input
+                  type="checkbox"
+                  checked={selectedImages.includes(image.id)}
+                  onChange={() => handleCheckboxChange(image.id)}
+                />
+                <Image
+                  src={image.src}
+                  alt={`Image ${image.id}`}
+                  fill={true}
+                  className={"image"}
+                />
+              </label>
+            </div>
+          ))}
       </div>
+    </div>
+  );
+};
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default Gallery;
