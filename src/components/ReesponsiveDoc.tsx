@@ -9,7 +9,7 @@ const ReesponsiveDoc: FC<ReesponsiveDocProps> = ({}) => {
       <h1>Image Gallery</h1>
       <p>
         This responsive image gallery using React JS with TypeScript the
-        following features: reordering, deleting multiple images, and setting a
+        following features: reordering, deleting multiple images with Toast, and setting a
         feature image.
       </p>
       <p>

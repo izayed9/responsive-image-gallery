@@ -8,6 +8,8 @@ interface Image {
 }
 import Image from "next/image";
 import ReesponsiveDoc from "@/components/ReesponsiveDoc";
+import { Toaster, toast } from "react-hot-toast";
+import DeleteConfirmation from "@/components/DeleteConfirmation";
 
 function useDragAndDrop() {
   const initialImages: Image[] = [
@@ -47,7 +49,6 @@ function useDragAndDrop() {
     return;
   };
 
-
   const handleCheckboxChange = (itemId: number) => {
     if (selectedImages.includes(itemId)) {
       setSelectedImages(selectedImages.filter((id) => id !== itemId));
@@ -56,14 +57,12 @@ function useDragAndDrop() {
     }
   };
 
-  const handleDeleteSelectedItems = (): void => {
+  const handleDeleteSelectedItems = (): any => {
     // Handle the deletion of selected items here, e.g., call an API or update your data.
     // For this example, we'll just clear the selection who are inludeed selected Item
     const seletedItems = [...items];
-   
-    const n = seletedItems.filter(
-      (img) => !selectedImages.includes(img.id)
-    );
+
+    const n = seletedItems.filter((img) => !selectedImages.includes(img.id));
     setSelectedImages([]);
     setItems(n);
   };
@@ -84,11 +83,32 @@ const Gallery: FC = ({}) => {
     items,
     handleDragStart,
     handleDragEnter,
-    
+
     selectedImages,
     handleCheckboxChange,
     handleDeleteSelectedItems,
   } = useDragAndDrop();
+
+  const showToast = () => {
+    toast(
+      () => (
+        <DeleteConfirmation
+          onConfirm={() => {
+            // Delete the files here
+            handleDeleteSelectedItems();
+            // You can put your delete logic here
+            toast.success("Files deleted...");
+          }}
+          onCancel={() => {
+            toast.error("Deletion canceled");
+          }}
+        />
+      ),
+      {
+        position: "top-center",
+      }
+    );
+  };
   return (
     <div className="container">
       <ReesponsiveDoc />
@@ -96,13 +116,11 @@ const Gallery: FC = ({}) => {
         <p>Selected Items: {selectedImages.length}</p>
         <div>
           {selectedImages.length > 0 && (
-            <button
-              className="custom-button"
-              onClick={handleDeleteSelectedItems}
-            >
+            <button className="custom-button" onClick={showToast}>
               Delete files
             </button>
           )}
+          <Toaster position="top-center" reverseOrder={false} />
         </div>
       </div>
       <div className="image-gallery">
