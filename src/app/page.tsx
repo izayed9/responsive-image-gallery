@@ -1,16 +1,16 @@
 "use client";
 import { FC, useState } from "react";
+import Image from "next/image";
+import ReesponsiveDoc from "@/components/ReesponsiveDoc";
+import { Toaster, toast } from "react-hot-toast";
+import DeleteConfirmation from "@/components/DeleteConfirmation";
+import ImageIcon from "@mui/icons-material/Image";
 
 interface Image {
   id: number;
   src: string;
   isFeatured: boolean;
 }
-import Image from "next/image";
-import ReesponsiveDoc from "@/components/ReesponsiveDoc";
-import { Toaster, toast } from "react-hot-toast";
-import DeleteConfirmation from "@/components/DeleteConfirmation";
-
 function useDragAndDrop() {
   const initialImages: Image[] = [
     { id: 1, src: "/images/image-1.png", isFeatured: false },
@@ -24,7 +24,6 @@ function useDragAndDrop() {
     { id: 9, src: "/images/image-8.webp", isFeatured: false },
     { id: 10, src: "/images/image-9.webp", isFeatured: false },
     { id: 11, src: "/images/image-10.jpeg", isFeatured: false },
-    { id: 12, src: "/images/image.jpeg", isFeatured: false },
   ];
 
   const [draggedItem, setDraggedItem] = useState<number | null>(null);
@@ -46,7 +45,6 @@ function useDragAndDrop() {
       setDraggedItem(imageId);
       setItems(newList);
     }
-    return;
   };
 
   const handleCheckboxChange = (itemId: number) => {
@@ -61,7 +59,6 @@ function useDragAndDrop() {
     // Handle the deletion of selected items here, e.g., call an API or update your data.
     // For this example, we'll just clear the selection who are inludeed selected Item
     const seletedItems = [...items];
-
     const n = seletedItems.filter((img) => !selectedImages.includes(img.id));
     setSelectedImages([]);
     setItems(n);
@@ -79,11 +76,9 @@ function useDragAndDrop() {
 
 const Gallery: FC = ({}) => {
   const {
-    draggedItem,
     items,
     handleDragStart,
     handleDragEnter,
-
     selectedImages,
     handleCheckboxChange,
     handleDeleteSelectedItems,
@@ -124,33 +119,36 @@ const Gallery: FC = ({}) => {
         </div>
       </div>
       <div className="image-gallery">
-        {items &&
-          items.map((image, index) => (
-            <div
-              className={`image-item v${index}`}
-              key={image.id}
-              draggable
-              onDragStart={() => handleDragStart(index)}
-              onDragEnter={(e) => handleDragEnter(e, index)}
-              // onDragLeave={(e) => handleDragLeave(e)}
-              // onDrop={(e) => handleDrop(e)}
-              onDragOver={(e) => e.preventDefault()}
-            >
-              <label className="image-checkbox">
-                <input
-                  type="checkbox"
-                  checked={selectedImages.includes(image.id)}
-                  onChange={() => handleCheckboxChange(image.id)}
-                />
-                <Image
-                  src={image.src}
-                  alt={`Image ${image.id}`}
-                  fill={true}
-                  className={"image"}
-                />
-              </label>
-            </div>
-          ))}
+        {items.map((image, index) => (
+          <div
+            className={`image-item v${index}`}
+            key={image.id}
+            draggable
+            onDragStart={() => handleDragStart(index)}
+            onDragEnter={(e) => handleDragEnter(e, index)}
+            // onDragLeave={(e) => handleDragLeave(e)}
+            // onDrop={(e) => handleDrop(e)}
+            onDragOver={(e) => e.preventDefault()}
+          >
+            <label className="image-checkbox">
+              <input
+                type="checkbox"
+                checked={selectedImages.includes(image.id)}
+                onChange={() => handleCheckboxChange(image.id)}
+              />
+              <Image
+                src={image.src}
+                alt={`Image ${image.id}`}
+                fill={true}
+                className={"image"}
+              />
+            </label>
+          </div>
+        ))}
+        <div className="add-image">
+          <ImageIcon />
+          <p>Add Image</p>
+        </div>
       </div>
     </div>
   );
