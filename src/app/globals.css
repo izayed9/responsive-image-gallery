@@ -9,7 +9,7 @@
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 }
 
-.v2 {
+.v0 {
   grid-row: 1 / span 2;
   grid-column: span 2;
   width: 100%;

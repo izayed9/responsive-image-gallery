@@ -1,18 +1,15 @@
-"use client";
-import { FC, useState } from "react";
+import { useState } from "react";
 
 interface Image {
   id: number;
   src: string;
   isFeatured: boolean;
 }
-import Image from "next/image";
-
-export function useDragAndDrop() {
+export const useDragAndDrop=()=> {
   const initialImages: Image[] = [
-    { id: 1, src: "/images/image-11.jpeg", isFeatured: true },
-    { id: 2, src: "/images/image-1.png", isFeatured: false },
-    { id: 3, src: "/images/image-2.png", isFeatured: false },
+    { id: 1, src: "/images/image-1.png", isFeatured: false },
+    { id: 2, src: "/images/image-2.png", isFeatured: false },
+    { id: 3, src: "/images/image-11.jpeg", isFeatured: true },
     { id: 4, src: "/images/image-3.png", isFeatured: false },
     { id: 5, src: "/images/image-4.png", isFeatured: false },
     { id: 6, src: "/images/image-5.png", isFeatured: false },
@@ -30,11 +27,10 @@ export function useDragAndDrop() {
   const handleDragStart = (imageId: number) => {
     setDraggedItem(imageId);
   };
+
   // A function that handles the drag enter event
 
   const handleDragEnter = (e: any, imageId: number) => {
-    e.target.style.backgroundColor = "#336699";
-
     if (draggedItem) {
       const newList = [...items];
       const item = newList[draggedItem];
@@ -43,14 +39,7 @@ export function useDragAndDrop() {
       setDraggedItem(imageId);
       setItems(newList);
     }
-    return;
   };
-  function handleDragLeave(e: any) {
-    e.target.style.cssText = "backgroudColor:yellow";
-  }
-  function handleDrop(e: any) {
-    e.target.style.cssText = "color:green";
-  }
 
   const handleCheckboxChange = (itemId: number) => {
     if (selectedImages.includes(itemId)) {
@@ -60,14 +49,11 @@ export function useDragAndDrop() {
     }
   };
 
-  const handleDeleteSelectedItems = (): void => {
+  const handleDeleteSelectedItems = (): any => {
     // Handle the deletion of selected items here, e.g., call an API or update your data.
-    // For this example, we'll just clear the selection.
+    // For this example, we'll just clear the selection who are inludeed selected Item
     const seletedItems = [...items];
-
     const n = seletedItems.filter((img) => !selectedImages.includes(img.id));
-    console.log("n value", n);
-
     setSelectedImages([]);
     setItems(n);
   };
@@ -76,8 +62,6 @@ export function useDragAndDrop() {
     items,
     handleDragStart,
     handleDragEnter,
-    handleDragLeave,
-    handleDrop,
     selectedImages,
     handleCheckboxChange,
     handleDeleteSelectedItems,
